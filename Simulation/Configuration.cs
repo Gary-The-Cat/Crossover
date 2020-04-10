@@ -15,6 +15,13 @@ namespace Game
 
         public static bool AllowCameraMovement => true;
 
+        public static float CameraMovementSpeed = 400f;
+
+        public static float CameraZoomSpeed = 0.1f;
+
+        // Degrees per second
+        public static float CameraRotationSpeed = 45f;
+
         public static Key PanLeft => Key.A;
 
         public static Key PanRight => Key.D;

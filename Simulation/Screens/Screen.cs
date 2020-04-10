@@ -3,6 +3,11 @@ using SFML.Graphics;
 
 namespace Game.Screens
 {
+    /// <summary>
+    /// Screen is our base class that we use to create and layer screens on top of one another.
+    /// In our example here, we only have one screen, and on it we are showing our towns and 
+    /// currnent path length. We could separate that into a Simulation screen and a HUD to display the path length.
+    /// </summary>
     public class Screen
     {
         public Camera Camera { get; set; }

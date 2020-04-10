@@ -11,6 +11,13 @@ namespace Game.Helpers
         private const int Linethickness = 4;
         private const int PathOffsetFromTown = 180;
 
+        /// <summary>
+        /// To draw the path of our current sequence, we have to create a bunch of convex shapes.
+        /// SFML has a native way to draw lines, but they are 1px wide, and do not show up well
+        /// in recordings, so there's a little extra work to calculate the line.
+        /// </summary>
+        /// <param name="townSequence"></param>
+        /// <returns></returns>
         public static List<ConvexShape> GetTownSequencePath(List<int> townSequence)
         {
             var paths = new List<ConvexShape>();
@@ -43,6 +50,10 @@ namespace Game.Helpers
             }
         }
 
+        /// <summary>
+        /// Hard coded town positions - They are hard coded for a 4K screen space, but with the new camera system this 
+        /// should not impact you if you have a smaller screen as it should scale!
+        /// </summary>
         public static List<Vector2f> TownPositions = new List<Vector2f>()
         {
             new Vector2f(3060, 1300), 

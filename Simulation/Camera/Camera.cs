@@ -29,55 +29,45 @@ namespace Game.ViewTools
 
         public void Update(float deltaT)
         {
+            // If we dont have camera movement enabled, return immediately
             if (!Configuration.AllowCameraMovement)
             {
                 return;
             }
 
+            // Camera movement is handled via an offset from the current position for simplicity.
             var ratio = Configuration.Width / (float)Configuration.Height;
             var offset = new Vector2f(0, 0);
+
+            // Translation
             if (Keyboard.IsKeyPressed(Configuration.PanUp))
-            {
-                offset.Y -= 400f * deltaT;
-            }
+                offset.Y -= Configuration.CameraMovementSpeed * deltaT;
 
             if (Keyboard.IsKeyPressed(Configuration.PanLeft))
-            {
-                offset.X -= 400f * deltaT / ratio;
-            }
+                offset.X -= Configuration.CameraMovementSpeed * deltaT / ratio;
 
             if (Keyboard.IsKeyPressed(Configuration.PanDown))
-            {
-                offset.Y += 400f * deltaT;
-            }
+                offset.Y += Configuration.CameraMovementSpeed * deltaT;
 
             if (Keyboard.IsKeyPressed(Configuration.PanRight))
-            {
-                offset.X += 400f * deltaT / ratio;
-            }
+                offset.X += Configuration.CameraMovementSpeed * deltaT / ratio;
 
+            // Zoom
             if (Keyboard.IsKeyPressed(Configuration.ZoomIn))
-            {
-                this.Zoom += 0.1f * deltaT;
-            }
+                this.Zoom += Configuration.CameraZoomSpeed * deltaT;
             else if (Keyboard.IsKeyPressed(Configuration.ZoomOut))
-            {
-                this.Zoom -= 0.1f * deltaT;
-            }
+                this.Zoom -= Configuration.CameraZoomSpeed * deltaT;
             else
-            {
                 this.Zoom = 1;
-            }
 
+            // Rotation
             if (Keyboard.IsKeyPressed(Configuration.RotateLeft))
-            {
-                this.Rotation -= 45f * deltaT;
-            }
-            if (Keyboard.IsKeyPressed(Configuration.RotateRight))
-            {
-                this.Rotation += 45f * deltaT;
-            }
+                this.Rotation -= Configuration.CameraRotationSpeed * deltaT;
 
+            if (Keyboard.IsKeyPressed(Configuration.RotateRight))
+                this.Rotation += Configuration.CameraRotationSpeed * deltaT;
+
+            // Update all the things we just calculated.
             this.Position += offset;
             
             this.view.Rotation = this.Rotation;
@@ -98,7 +88,7 @@ namespace Game.ViewTools
 
         public void ScaleToWindow(float width, float height)
         {
-            var viewAspect = GetAspectRatio();
+            var viewAspect = GetDesiredAspectRatio();
             var windowAspect = width / height;
 
             this.ViewPort = new FloatRect(0, 0, 1, 1);
@@ -114,7 +104,7 @@ namespace Game.ViewTools
             }
         }
 
-        private float GetAspectRatio()
+        private float GetDesiredAspectRatio()
         {
             return Configuration.Width / (float)Configuration.Height;
         }

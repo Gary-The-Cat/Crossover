@@ -1,12 +1,10 @@
 ﻿using Game.Factories;
 using Game.Helpers;
 using Game.SFML_Text;
-using Game.ExtensionMethods;
 using SFML.Graphics;
-using SFML.System;
 using System.Collections.Generic;
-using System.IO;
 using Game.GeneticAlgorithm;
+using Game.ViewTools;
 
 namespace Game.Screens
 {
@@ -14,11 +12,7 @@ namespace Game.Screens
     {
         private List<RectangleShape> townVisuals;
 
-        private RenderTexture texture;
-
         private FontText totalDistanceString;
-
-        private int frame = 0;
 
         public SimulationScreen(
             RenderWindow window,
@@ -28,79 +22,65 @@ namespace Game.Screens
             this.townVisuals = new List<RectangleShape>();
             this.pathLines = new List<ConvexShape>();
 
-            var towns = TownFactory.GetTowns();
-
-            foreach(var town in towns)
+            // Grab the images that are used to represent our towns and insert them into quads so they can be shown.
+            // For now our town positions are hard coded, but theres no reason we cant expand this in future to randomly place them.
+            foreach(var town in TownFactory.GetTowns())
             {
                 this.townVisuals.Add(town.Shape);
             }
 
-            // Rendering to a texture before we render to the screen allows us to save the rendered image to file.
-            texture = new RenderTexture(Configuration.Width, Configuration.Height);
+            // Create a camera instance to handle the changing of window sizes
+            Camera = new Camera(Configuration.SinglePlayer);
 
-            totalDistanceString = new FontText(new Font("font.ttf"), "test", Color.Black, 4);
+            // Create a 'FontText' which is a simple wrapper to easily draw text to the screen.
+            totalDistanceString = new FontText(new Font("font.ttf"), "Welcome! Everything is fine.", Color.Black, 4);
         }
 
         List<ConvexShape> pathLines;
 
         public void UpdateSequence(Neighbour neighbour)
         {
+            // Convert our sequence of ints to the 2D line representations to be drawn on the screen.
             pathLines = TownHelper.GetTownSequencePath(neighbour.Sequence);
+
+            // Convert the fitness into a format that is easily digestable and update the value on screen.
             totalDistanceString.StringText = neighbour.GetFitness().ToString("#.##");
         }
-        
+
+        /// <summary>
+        /// Update - Update each of the components that are time dependent.
+        /// </summary>
+        /// <param name="deltaT"></param>
+        public override void Update(float deltaT)
+        {
+            base.Update(deltaT);
+
+            // Checks user input and modifies the cameras position / rotation.
+            Camera.Update(deltaT);
+        }
+
         /// <summary>
         /// Draw - Here we don't update any of the components, only draw them in their current state to the screen.
         /// </summary>
         public void Draw()
         {
-            if (Configuration.DrawToFile)
-            {
-                this.DrawToFile();
-            }
-            else
-            {
-                foreach (var pathLine in pathLines)
-                {
-                    window.Draw(pathLine);
-                }
+            // Clear the previous frame off the screen.
+            window.Clear(Configuration.Background);
 
-                foreach (var town in townVisuals)
-                {
-                    window.Draw(town);
-                }
-            }
+            // Update the current view based off the cameras location/rotation.
+            window.SetView(Camera.GetView());
 
-            window.DrawString(totalDistanceString, new Vector2f(Configuration.Width / 2, 20));
-        }
-
-        private void DrawToFile()
-        {
-            texture.Clear(Configuration.Background);
-            window.Clear();
-
+            // Draw each of the line segment for the path we are currently displaying.
             foreach (var pathLine in pathLines)
             {
-                texture.Draw(pathLine);
+                window.Draw(pathLine);
             }
 
+            // Draw all of our towns.
             foreach (var town in townVisuals)
             {
-                texture.Draw(town);
+                window.Draw(town);
             }
-
-            texture.Display();
-
-            if (!Directory.Exists($"C:\\Simulation\\Captures\\"))
-            {
-                Directory.CreateDirectory($"C:\\Simulation\\Captures\\");
-            }
-
-            texture.Texture.CopyToImage().SaveToFile($"C:\\Simulation\\Captures\\{(frame).ToString("000000")}.png");
-
-            frame++;
-            var sprite = new Sprite(texture.Texture);
-            window.Draw(sprite);
         }
     }
 }

@@ -16,38 +16,34 @@ namespace Game.Helpers
         /// SFML has a native way to draw lines, but they are 1px wide, and do not show up well
         /// in recordings, so there's a little extra work to calculate the line.
         /// </summary>
-        /// <param name="townSequence"></param>
-        /// <returns></returns>
+        /// <param name="townSequence">The genome of the sequence we want to display</param>
+        /// <returns>The line visuals for the requested path</returns>
         public static List<ConvexShape> GetTownSequencePath(List<int> townSequence)
         {
             var paths = new List<ConvexShape>();
 
             for(int i = 1; i < townSequence.Count; i++)
             {
+                // Get the two towns that our line will be joining
                 var fromTown = TownPositions[townSequence[i - 1]];
                 var toTown = TownPositions[townSequence[i]];
 
+                // Get the normalized vector in the direction of fromTown to toTown
                 var directionVector = (toTown - fromTown).Normalize();
 
+                // Now that we have the vector pointing from fromTown to toTown, we can traverse it to give our towns
+                // some space around them when we draw our line.
                 var startingPoint = fromTown + (directionVector * PathOffsetFromTown);
                 var endingPoint = toTown - (directionVector * PathOffsetFromTown);
 
+                // We want to fade the lines from black - grey to show the direction of the path
                 var lumination = Convert.ToByte((20) * (i - 1));
 
+                // Convert the points we have into a 'ConvexShape' :( damn SFML.
                 paths.Add(SFMLGraphicsHelper.GetLine(startingPoint, endingPoint, Linethickness, new Color(lumination, lumination, lumination)));
             }
 
             return paths;
-        }
-
-        private static int townId { get; set; }
-
-        public static int TownId
-        {
-            get
-            {
-                return townId++;
-            }
         }
 
         /// <summary>

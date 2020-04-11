@@ -17,15 +17,11 @@ namespace Game.DataStructures
                 Origin = new Vector2f(150, 150),
                 Position = position,
             };
-
-            Id = TownHelper.TownId;
         }
 
         public Vector2f Position { get; set; }
 
         public RectangleShape Shape { get; set; }
-
-        public int Id { get; set; }
 
         public void Draw(RenderWindow window)
         {

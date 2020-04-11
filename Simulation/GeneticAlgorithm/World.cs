@@ -8,6 +8,7 @@ namespace Game.GeneticAlgorithm
     public class World
     {
         public const int PopulationCount = 100;
+        private static List<double> cumulativeProportions;
         private static Random random = new Random();
 
         public List<Neighbour> Neighbours { get; set; }
@@ -15,6 +16,7 @@ namespace Game.GeneticAlgorithm
         public World()
         {
             Neighbours = new List<Neighbour>();
+            cumulativeProportions = new List<double>();
         }
 
         public void Spawn()
@@ -40,6 +42,9 @@ namespace Game.GeneticAlgorithm
 
         public void DoGeneration()
         {
+            // We are about t 
+            this.UpdateCumulativeProportions();
+
             // Create a list to hold our new offspring
             var offspring = new List<Neighbour>();
 
@@ -103,29 +108,6 @@ namespace Game.GeneticAlgorithm
 
         private Neighbour BiasedRandomSelection()
         {
-            // Get the inverse proportion that each individual takes up of the total solution
-            // The shorter the path, the larger the value - the fitter that solution is.
-            var sum = Neighbours.Sum(n => n.GetFitness());
-            var proportions = Neighbours.Select(n => sum / n.GetFitness());
-
-            // Normalize these values to sum to 1
-            // This allows us to randomly generate a number between 0-1 and select that individual
-            // [0.25, 0.30, 0.45]
-            var proportionSum = proportions.Sum();
-            var normalizedProportions = proportions.Select(p => p / proportionSum);
-
-            // Create a list to hold our cumulated values
-            var cumulativeProportions = new List<double>();
-            var cumulativeTotal = 0.0;
-
-            // Populate the cumulated values
-            // [0.25, 0.55, 1]
-            foreach (var proportion in normalizedProportions)
-            {
-                cumulativeTotal += proportion;
-                cumulativeProportions.Add(cumulativeTotal);
-            }
-
             // Generate a random number between 0 - 1
             // 0.4
             var selectedValue = random.NextDouble();
@@ -152,6 +134,31 @@ namespace Game.GeneticAlgorithm
         public Neighbour GetBestNeighbour()
         {
             return Neighbours.OrderBy(n => n.GetFitness()).First();
+        }
+
+        public void UpdateCumulativeProportions()
+        {
+            // Get the inverse proportion that each individual takes up of the total solution
+            // The shorter the path, the larger the value - the fitter that solution is.
+            var sum = Neighbours.Sum(n => n.GetFitness());
+            var proportions = Neighbours.Select(n => sum / n.GetFitness());
+
+            // Normalize these values to sum to 1
+            // This allows us to randomly generate a number between 0-1 and select that individual
+            // [0.25, 0.30, 0.45]
+            var proportionSum = proportions.Sum();
+            var normalizedProportions = proportions.Select(p => p / proportionSum);
+
+            // Create a list to hold our cumulated values
+            var cumulativeTotal = 0.0;
+
+            // Populate the cumulated values
+            // [0.25, 0.55, 1]
+            foreach (var proportion in normalizedProportions)
+            {
+                cumulativeTotal += proportion;
+                cumulativeProportions.Add(cumulativeTotal);
+            }
         }
     }
 }

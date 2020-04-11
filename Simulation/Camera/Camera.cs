@@ -18,7 +18,7 @@ namespace Game.ViewTools
 
         public Camera(FloatRect configuration)
         {
-            Position = new Vector2f(0, 0);
+            Position = new Vector2f(Configuration.Width / 2, Configuration.Height / 2);
 
             this.view = new View(new FloatRect(
                 new Vector2f(0, 0),
@@ -74,8 +74,8 @@ namespace Game.ViewTools
 
             this.view.Viewport = this.ViewPort;
 
-            this.view.Move(offset);
-                        
+            this.SetCentre(this.Position, 0.2f);
+
             this.view.Zoom(this.Zoom);
         }
 

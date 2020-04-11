@@ -9,7 +9,6 @@ namespace Game.ExtensionMethods
         public static void Draw(this RenderWindow window, Sprite texture, float scale, Vector2f position)
         {
             texture.Scale = new Vector2f(scale, scale);
-            var size = texture.GetLocalBounds();
             texture.Position = new Vector2f(position.X, position.Y);
             window.Draw(texture);
         }

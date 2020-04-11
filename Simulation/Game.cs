@@ -14,11 +14,13 @@ namespace Game
         private readonly World world;
         private readonly Clock clock;
         private readonly Clock generationClock;
+        private readonly float generationTime = 0.2f;
+        private int generation = 0;
 
         public Game()
         {
             // Create the main window
-            window = new RenderWindow(new VideoMode(Configuration.Width, Configuration.Height), "Simulation");
+            window = new RenderWindow(new VideoMode(Configuration.Width, Configuration.Height), "Simulation", Styles.Fullscreen);
 
             // Set our frame rate to 60fps so the screen is responsive.
             window.SetFramerateLimit(60);
@@ -71,13 +73,21 @@ namespace Game
                 window.Display();
 
                 // If one second has passed, breed the next generation
-                if(generationClock.ElapsedTime.AsSeconds() > 1)
+                if(generationClock.ElapsedTime.AsSeconds() > generationTime)
                 {
                     // Do one generation of breeding & culling.
                     world.DoGeneration();
 
                     // Restart our generation timer
                     generationClock.Restart();
+
+                    screen.GenerationString.StringText = $"Generation: {generation++}";
+                }
+
+                // Check to see if the user has pressed the quit key.
+                if (Keyboard.IsKeyPressed(Configuration.QuitKey))
+                {
+                    return;
                 }
             }
         }

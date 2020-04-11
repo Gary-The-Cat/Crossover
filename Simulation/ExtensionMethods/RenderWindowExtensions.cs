@@ -13,7 +13,7 @@ namespace Game.ExtensionMethods
             window.Draw(texture);
         }
 
-        public static void DrawString(this RenderWindow window, FontText textFont, Vector2f position)
+        public static void DrawString(this RenderWindow window, FontText textFont, Vector2f position, bool centre = true)
         {
             var text = new Text(textFont.StringText, textFont.Font);
             var size = text.GetLocalBounds();
@@ -21,7 +21,9 @@ namespace Game.ExtensionMethods
             var textWidth = size.Width * scale;
             var textHeight = size.Height * scale;
             text.Scale = new Vector2f(scale, scale);
-            text.Position = new Vector2f(position.X - textWidth / 2, position.Y - textHeight / 2);
+            text.Position = centre
+                ? new Vector2f(position.X - textWidth / 2, position.Y - textHeight / 2)
+                : new Vector2f(position.X, position.Y);
             text.FillColor = textFont.TextColour;
             text.OutlineColor = textFont.TextColour;
             window.Draw(text);

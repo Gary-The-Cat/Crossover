@@ -10,6 +10,7 @@ namespace Game.Helpers
     {
         private const int Linethickness = 4;
         private const int PathOffsetFromTown = 180;
+        private static Random random = new Random();
 
         /// <summary>
         /// To draw the path of our current sequence, we have to create a bunch of convex shapes.
@@ -37,7 +38,7 @@ namespace Game.Helpers
                 var endingPoint = toTown - (directionVector * PathOffsetFromTown);
 
                 // We want to fade the lines from black - grey to show the direction of the path
-                var lumination = Convert.ToByte((20) * (i - 1));
+                var lumination = Convert.ToByte((200.0 / TownPositions.Count) * (i - 1));
 
                 // Convert the points we have into a 'ConvexShape' :( damn SFML.
                 paths.Add(SFMLGraphicsHelper.GetLine(startingPoint, endingPoint, Linethickness, new Color(lumination, lumination, lumination)));
@@ -46,13 +47,39 @@ namespace Game.Helpers
             return paths;
         }
 
+        public static void PopulateTowns()
+        {
+            if (Configuration.UseRandomTowns)
+            {
+                for(int i = 0; i < Configuration.TownCount; i++)
+                {
+                    TownPositions.Add(GeneratRandomTownPosition());
+                }
+            }
+            else
+            {
+                TownPositions.AddRange(townPositions);
+            }
+        }
+
+        private static Vector2f GeneratRandomTownPosition()
+        {
+            return new Vector2f
+            {
+                X = 100 + ((float)random.NextDouble() * (Configuration.Width - 100)),
+                Y = 100 + ((float)random.NextDouble() * (Configuration.Height - 100))
+            };
+        }
+
         /// <summary>
         /// Hard coded town positions - They are hard coded for a 4K screen space, but with the new camera system this 
         /// should not impact you if you have a smaller screen as it should scale!
         /// </summary>
-        public static List<Vector2f> TownPositions = new List<Vector2f>()
+        public static List<Vector2f> TownPositions = new List<Vector2f>();
+
+        private static List<Vector2f> townPositions = new List<Vector2f>()
         {
-            new Vector2f(3060, 1300), 
+            new Vector2f(3060, 1300),
             new Vector2f(1050, 450),
             new Vector2f(450, 750),
             new Vector2f(690, 1890),

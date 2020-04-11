@@ -15,6 +15,8 @@ namespace Game.Screens
         private List<RectangleShape> townVisuals;
 
         private FontText totalDistanceString;
+        private FontText quitString;
+        public FontText GenerationString { get; private set; }
 
         private readonly List<ConvexShape> pathLines;
 
@@ -25,6 +27,9 @@ namespace Game.Screens
         {
             this.townVisuals = new List<RectangleShape>();
             this.pathLines = new List<ConvexShape>();
+
+            // Populate the towns, either hard coded or randomly. This is congifurable in the Configuration.cs.
+            TownHelper.PopulateTowns();
 
             // Grab the images that are used to represent our towns and insert them into quads so they can be shown.
             // For now our town positions are hard coded, but theres no reason we cant expand this in future to randomly place them.
@@ -37,7 +42,9 @@ namespace Game.Screens
             Camera = new Camera(Configuration.SinglePlayer);
 
             // Create a 'FontText' which is a simple wrapper to easily draw text to the screen.
-            totalDistanceString = new FontText(new Font("font.ttf"), "Welcome! Everything is fine.", Color.Black, 3);
+            totalDistanceString = new FontText(new Font("font.ttf"), string.Empty, Color.Black, 3);
+            GenerationString = new FontText(new Font("font.ttf"), $"Generation: {0}", Color.Black, 3);
+            quitString = new FontText(new Font("font.ttf"), "Press 'Q' to quit.", Color.Black, 3);
         }
 
         public void UpdateSequence(Neighbour neighbour)
@@ -87,7 +94,13 @@ namespace Game.Screens
             }
 
             // Draw the updated distance to the screen
-            window.DrawString(totalDistanceString, new Vector2f(Configuration.Width / 2, 100));
+            window.DrawString(totalDistanceString, new Vector2f(Configuration.Width / 2, 50));
+
+            // Display the current generation
+            window.DrawString(GenerationString, new Vector2f(50, 50), false);
+
+            // Draw the 'Press Q to quit' message
+            window.DrawString(quitString, new Vector2f(450 , Configuration.Height - 100));
         }
     }
 }

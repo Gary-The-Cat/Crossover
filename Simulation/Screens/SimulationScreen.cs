@@ -45,7 +45,8 @@ namespace Game.Screens
             // Convert our sequence of ints to the 2D line representations to be drawn on the screen.
             pathLines = TownHelper.GetTownSequencePath(neighbour.Sequence);
 
-            // Convert the fitness into a format that is easily digestable and update the value on screen.
+            // Convert the fitness into a format that is easily digestable and update the value on screen
+            // Format: 1234.56
             totalDistanceString.StringText = neighbour.GetFitness().ToString("#.##");
         }
 

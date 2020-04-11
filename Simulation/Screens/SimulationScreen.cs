@@ -16,6 +16,8 @@ namespace Game.Screens
 
         private FontText totalDistanceString;
 
+        private readonly List<ConvexShape> pathLines;
+
         public SimulationScreen(
             RenderWindow window,
             FloatRect configuration)
@@ -38,12 +40,11 @@ namespace Game.Screens
             totalDistanceString = new FontText(new Font("font.ttf"), "Welcome! Everything is fine.", Color.Black, 3);
         }
 
-        List<ConvexShape> pathLines;
-
         public void UpdateSequence(Neighbour neighbour)
         {
             // Convert our sequence of ints to the 2D line representations to be drawn on the screen.
-            pathLines = TownHelper.GetTownSequencePath(neighbour.Sequence);
+            pathLines.Clear();
+            pathLines.AddRange(TownHelper.GetTownSequencePath(neighbour.Sequence));
 
             // Convert the fitness into a format that is easily digestable and update the value on screen
             // Format: 1234.56

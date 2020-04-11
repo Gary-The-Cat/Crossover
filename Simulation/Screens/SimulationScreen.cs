@@ -5,6 +5,8 @@ using SFML.Graphics;
 using System.Collections.Generic;
 using Game.GeneticAlgorithm;
 using Game.ViewTools;
+using Game.ExtensionMethods;
+using SFML.System;
 
 namespace Game.Screens
 {
@@ -33,7 +35,7 @@ namespace Game.Screens
             Camera = new Camera(Configuration.SinglePlayer);
 
             // Create a 'FontText' which is a simple wrapper to easily draw text to the screen.
-            totalDistanceString = new FontText(new Font("font.ttf"), "Welcome! Everything is fine.", Color.Black, 4);
+            totalDistanceString = new FontText(new Font("font.ttf"), "Welcome! Everything is fine.", Color.Black, 3);
         }
 
         List<ConvexShape> pathLines;
@@ -64,23 +66,26 @@ namespace Game.Screens
         /// </summary>
         public void Draw()
         {
-            // Clear the previous frame off the screen.
+            // Clear the previous frame off the screen
             window.Clear(Configuration.Background);
 
-            // Update the current view based off the cameras location/rotation.
+            // Update the current view based off the cameras location/rotation
             window.SetView(Camera.GetView());
 
-            // Draw each of the line segment for the path we are currently displaying.
+            // Draw each of the line segment for the path we are currently displaying
             foreach (var pathLine in pathLines)
             {
                 window.Draw(pathLine);
             }
 
-            // Draw all of our towns.
+            // Draw all of our towns
             foreach (var town in townVisuals)
             {
                 window.Draw(town);
             }
+
+            // Draw the updated distance to the screen
+            window.DrawString(totalDistanceString, new Vector2f(Configuration.Width / 2, 100));
         }
     }
 }

@@ -31,7 +31,8 @@ namespace Game.GeneticAlgorithm
         private Neighbour GenerateNeighbour()
         {
             // Generate a list of numbers [0, 1, 2, 3... 9]
-            var sequence = Enumerable.Range(0, 10).ToList();
+            var townCount = Configuration.UseRandomTowns ? Configuration.TownCount : 10;
+            var sequence = Enumerable.Range(0, townCount).ToList();
 
             // Randomly shuffle the list [3, 1, 5, 9... 4]
             sequence.Shuffle();

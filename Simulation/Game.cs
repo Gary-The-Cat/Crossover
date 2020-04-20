@@ -85,7 +85,7 @@ namespace Game
                 }
 
                 // Check to see if the user has pressed the quit key.
-                if (Keyboard.IsKeyPressed(Configuration.QuitKey))
+                if (Keyboard.IsKeyPressed(Configuration.QuitKey) || Keyboard.IsKeyPressed(Keyboard.Key.Escape))
                 {
                     return;
                 }
